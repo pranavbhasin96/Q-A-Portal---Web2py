@@ -1,0 +1,7 @@
+{{extend 'layout.html'}}
+<h1> My Topics </h1>
+{{for tags in alltags:}}
+	{{if str(tags.id) in auth.user.subscribed:}}
+		{{=LI(A(tags.tag_name,_href=URL('questions',args=tags.tag_name)))}}
+	{{pass}}
+{{pass}}

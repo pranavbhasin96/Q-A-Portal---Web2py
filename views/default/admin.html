@@ -1,0 +1,69 @@
+{{extend 'layout.html'}}
+<h1>ALL TOPICS</h2>
+{{for i,tags in enumerate(ques):}}
+	{{if i==items_per_page:break}}
+		{{=LI(A(tags.question,_href=URL('answer',args=tags.id)))}}
+		{{=tags.description}}
+		{{if tags.anonymous==False:}}
+	        	<div>Asked By:{{=A(tags.author_name, _href=URL('profile', args=tags.created_by))}}</div>
+		{{else:}}
+		        <div>Asked By: Anonymous</div>
+		{{pass}}
+	{{if tags.sensible!=True:}}
+		<button id="{{=tags.id}}" onclick="validate(id);func1(id);"><span id="btn{{=tags.id}}">Sensible</span></button>
+	{{else:}}
+		<button id="{{=tags.id}}" onclick="devalidate(id);func2(id);"><span id="bnt{{=tags.id}}">Insensible</span></button>
+	{{pass}}
+	{{pass}}
+{{pass}}
+<div>
+	{{if page:}}
+		<span id="pbtn"><a href="{{=URL(args=[page-1])}}"><button>previous</button></a></span>
+	{{pass}}
+	{{if len(ques)>items_per_page:}}
+		<span id=nbtn><a href="{{=URL(args=[page+1])}}"><button>next</button></a></span>
+	{{pass}}
+</div>
+
+<script>
+	function validate(qid){
+
+		jQuery.ajax({method:'post',url:"{{=URL('validate')}}",
+		data:{'qid':qid}
+		});
+	}
+	function devalidate(qid){
+
+		jQuery.ajax({method:'post',url:"{{=URL('devalidate')}}",
+		data:{'qid':qid}
+		});
+	}
+	function func1(tagid)
+	{
+		var string1="Sensible";
+		var string2="Insensible";
+		var str1="btn";
+		var x=tagid;
+		str1=str1+x;
+		var y=document.getElementById(str1);
+		var y1=y.innerHTML;
+		if(y1.localeCompare(string1)==0)
+			y.innerHTML="Insensible";
+		else if(y1.localeCompare(string2)==0)
+			y.innerHTML="Sensible";
+	}
+	function func2(tagid){
+		var string1="Sensible";
+		var string2="Insensible";
+		var str2="bnt";
+		var x=tagid;
+		str2=str2+x;
+		var z=document.getElementById(str2);
+		var z1=z.innerHTML;
+		if(z1.localeCompare(string1)==0)
+			z.innerHTML="Insensible";
+		else if(z1.localeCompare(string2)==0)
+			z.innerHTML="Sensible";	
+	}
+
+</script>

@@ -1,0 +1,147 @@
+{{extend 'layout.html'}}
+
+<style>
+.star{
+	width:50px;
+	height:50px;
+}
+
+.inline2{
+	display:inline-block;
+}
+.comment-avatar {
+	float:left;
+	width: 65px;
+	height: 65px;
+	position: relative;
+	z-index: 99;
+	float: left;
+	border: 3px solid #FFF;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	overflow: hidden;
+}
+.comment-avatar img {
+	width: 60px;
+	height: 60px;
+}
+
+.inline{
+	display:inline-block;
+}
+
+.cursor:hover{
+	cursor:pointer;
+}
+</style>
+<div class="row">
+<div class="col-sm-1">
+	<br>
+	{{if str(question[0].id) not in auth.user.starred:}}
+		<img class="star" src="/quora/static/images/off.jpeg" id="star" onclick="changeImage();star1({{=question[0].id}});" alt="click to star">
+	{{else:}}
+		<img class="star" src="/quora/static/images/on.svg" id="star" onclick="star1({{=question[0].id}});changeImage();" alt="click to unstar">
+	{{pass}}
+	<br><br>
+	{{if question[0].judged==False:}}
+	<div>Not Judged</div>
+	{{elif question[0].sensible==False:}}
+	<div>Insensible</div>
+	{{else:}}
+	<div>Sensible</div>
+	{{pass}}
+</div>
+<div class="col-sm-11">
+	<div><h1>{{=question[0].question}}</h1></div>
+	<h4>{{=question[0].description}}</h4>
+	{{if question[0].anonymous==False:}}
+		<h4 class="inline2">Asked By:&nbsp;&nbsp;{{=A(question[0].author_name, _href=URL('profile',args=question[0].created_by))}}</h4>
+	{{else:}}
+		<h4 class="inline2">Asked By:&nbsp;&nbsp;Anonymous</h4>
+	{{pass}}
+	<div class="inline2">{{=prettydate(question[0].created_on)}}</div>
+<div>
+	<hr>
+	<br>
+	<h2>Answers</h2>
+	<div class="container">
+		{{for answer in answers:}}
+			<div class="jumbotron">
+				{{user=db(db.auth_user.id==answer.created_by).select().first()}}
+				<div class="inline1" style="float:left"><img class="comment-avatar" src="{{=URL('download', args=user.profile_picture)}}" /></div>
+				<br>
+				<div>{{=A(answer.author_name, _href=URL('profile', args=answer.created_by))}}({{=user.category}}):</div>
+				<br><br>
+				<div class="row">
+				<div class="col-sm-7">
+				<div>{{=answer.answer}}</div>
+				</div>
+				<div class="col-sm-4"></div>
+				</div>
+				<br>
+				<div>{{=prettydate(answer.created_on)}}</div>
+				{{if str(auth.user.id) not in answer.upvote:}}
+					<div class="inblock cursor">
+						<span id="{{=answer.id}}" class="glyphicon glyphicon-thumbs-up" onclick="tolike(id);func1(id);"></span>
+					</div>
+				{{else:}}
+					<div class="inblock cursor">
+						<span id="{{=answer.id}}" class="glyphicon glyphicon-thumbs-down" onclick="tolike(id);func2(id);"></span>
+					 &nbsp;<span class="inblock" id="like{{=answer.id}}">{{=len(answer.upvote)}}</span>
+					</div>	
+				{{pass}}
+			</div>
+		{{pass}}
+		{{=form}}
+	</div>
+</div>
+</div>
+</div>
+<script>
+function star1(qid){
+	jQuery.ajax({method:'post',url:"{{=URL('star')}}",
+	data:{'qid':qid}
+	});		
+}
+
+function changeImage() {
+	var image = document.getElementById('star');
+	if (image.src.match("/quora/static/images/off.jpeg")) {
+		image.src = "/quora/static/images/on.svg";
+		image.alt = "click to star"
+	} else {
+		image.src = "/quora/static/images/off.jpeg";
+		image.alt = "click to unstar"
+	}
+}
+
+function tolike(answerid){
+	var str="#like";
+	str=str+answerid
+	jQuery.ajax({method:'post',url:"{{=URL('like')}}",
+		data:{'answerid':answerid},
+		success:function(result){
+			$(str).html(result);
+		}
+		});
+}
+function func1(id)
+{
+	if ( document.getElementById(id).className.match(/(?:^|\s)glyphicon-thumbs-up(?!\S)/) )
+		document.getElementById(id).className="glyphicon glyphicon-thumbs-down";
+	else
+		document.getElementById(id).className="glyphicon glyphicon-thumbs-up";
+}
+function func2(id)
+{
+	if ( document.getElementById(id).className.match(/(?:^|\s)glyphicon-thumbs-up(?!\S)/) )
+		document.getElementById(id).className="glyphicon glyphicon-thumbs-down";
+	else
+		document.getElementById(id).className="glyphicon glyphicon-thumbs-up";
+}
+</script>
+

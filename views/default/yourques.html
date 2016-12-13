@@ -1,0 +1,43 @@
+{{extend 'layout.html'}}
+
+<style>
+.question a{
+	color:#001a66;
+	font-size:30px;
+}
+.desc{
+	font-size:20px;
+}
+
+</style>
+
+<div class="row">
+	<div class="col-sm-3"></div>
+	<div class="col-sm-6">
+	<center>
+		<h1>Questions Asked By You</h1><br>
+		{{for i,questions in enumerate(question):}}
+			{{if i==items_per_page:break}}
+		<div class="jumbotron">
+			<span class="question">{{=A(questions.question, _href=URL('answer', args=questions.id))}}</span>
+			<br>
+			<span class="desc">{{=questions.description}}</span>
+			<br>
+			{{=A(edita, _href=URL('edita', args=questions.id))}}
+			<br><br>
+		</div>
+			{{pass}}
+		{{pass}}
+	</center>
+	<div>
+        {{if page:}}
+		<span id="pbtn" style="float:left;"><a href="{{=URL(args=[page-1])}}"><button>previous</button></a></span>
+	{{pass}}
+	{{if len(question)>items_per_page:}}
+		<span id=nbtn style="float:right;"><a href="{{=URL(args=[page+1])}}"><button>next</button></a></span>
+	{{pass}}
+	</div>
+	</div>
+	<div class="col-sm-3"></div>
+</div>
+

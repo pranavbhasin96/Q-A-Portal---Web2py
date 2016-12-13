@@ -1,0 +1,64 @@
+{{extend 'layout.html'}}
+
+<style>
+.infor{
+	font-size:20px;
+}
+.prime{
+	color:#990000;
+}
+.recent{
+	color:#cc3300;
+}
+.recent a{
+	color:#57330f;
+	font-size:20px;
+}
+
+.recent a:hover{
+	color:grey;
+	font-size:20px;
+	text-decoration:none;
+}
+h3{
+}
+</style>
+<div class="row">
+<div class="col-sm-3">
+<img width="200px" height="200px"
+     src="{{=URL('download', args=user.profile_picture)}}" />
+</div>
+<div class="col-sm-9">
+<h1>{{=user.first_name}}&nbsp{{=user.last_name}}, {{=user.batch}}</h1>
+<h4>{{=user.category}}</h4>
+<hr>
+<br><br>
+
+<div class="infor">
+<span class="prime">Username :</span>&nbsp&nbsp{{=user.username}} 
+<br>
+<span class="prime">Total Upvotes :</span>&nbsp&nbsp{{=user.totalupvotes}} 
+<br>
+<span class="prime">Email :</span>&nbsp&nbsp{{=user.email}} 
+<br>
+<span class="prime">Phone :</span>&nbsp&nbsp{{=user.phone}} 
+<br>
+<span class="prime">About :</span>&nbsp&nbsp{{=user.about_yourself}}
+<br><br>
+</div>
+<h3>Recently Asked Questions</h3>
+{{if len(questions)>=3:}}
+<div class="recent">{{=A(questions[2].question, _href=URL('answer',args=questions[2].id))}}</div>
+{{pass}}
+{{if len(questions)>=2:}}
+<div class="recent">{{=A(questions[1].question, _href=URL('answer',args=questions[1].id))}}</div>
+{{pass}}
+{{if len(questions)>=1:}}
+<div class="recent">{{=A(questions[0].question, _href=URL('answer',args=questions[0].id))}}</div>
+{{else:}}
+<div>No Questions</div>
+{{pass}}
+
+
+</div>
+</div>

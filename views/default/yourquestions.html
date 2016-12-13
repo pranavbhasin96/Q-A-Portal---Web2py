@@ -1,0 +1,4 @@
+{{extend 'layout.html'}}
+{{for questions in questions:}}
+{{=LI(A(questions.question, _href=URL('answer', args=questions.id)))}}
+{{pass}}

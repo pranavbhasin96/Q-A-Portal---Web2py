@@ -1,0 +1,76 @@
+{{extend 'layout.html'}}
+<style>
+.comment-avatar {
+	float:left;
+	width: 65px;
+	height: 65px;
+	position: relative;
+	z-index: 99;
+	float: left;
+	border: 3px solid #FFF;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	overflow: hidden;
+}
+.comment-avatar img {
+	width: 60px;
+	height: 60px;
+}
+.inline{
+	display:inline-block;
+}
+
+.inline1{
+	display:inline-block;
+}
+</style>
+<div class="container row" style="padding-top:15px;">
+<div class="col-sm-3">
+<h1> My Topics </h1>
+<div style="padding-left:30px;">
+{{for tags in alltags:}}
+	{{if str(tags.id) in auth.user.subscribed:}}
+		<div style="font-size:1.5em;">{{=LI(A(tags.tag_name,_href=URL('questions',args=tags.tag_name)))}}</div>
+	{{pass}}
+{{pass}}
+</div>
+</div>
+<div class="col-sm-9">
+<h1>Most Recent Questions For You</h1>
+{{for questions in question:}}
+	{{if questions.sensible==False:}}
+	<div class="jumbotron" style="padding-top:5px;" style="background-color:red;">
+	{{elif questions.sensible==True:}}
+	<div class="jumbotron" style="padding-top:5px;" style="background-color:green">
+	{{else:}}
+	<div class="jumbotron" style="padding-top:5px;">
+	{{pass}}
+		{{answer=db(db.answer.question_id==questions.id).select(db.answer.ALL,orderby=~db.answer.created_on)}}	
+		<h2 class="inline">{{=A(questions.question, _href=URL('answer', args=questions.id))}}</h2>
+		<br>
+		{{if questions.anonymous==False:}}
+			<span>Asked By:&nbsp;&nbsp;{{=A(questions.author_name, _href=URL('profile', args=questions.created_by))}}</span>
+			<span>about&nbsp;{{=prettydate(questions.created_on)}}</span>
+		{{else:}}
+			<span>Asked By: Anonymous</span>
+			<span>about&nbsp;{{=prettydate(questions.created_on)}}</span>
+		{{pass}}
+		<br>
+		<br>
+		{{if len(answer)>0:}}
+		{{user=db(db.auth_user.id==answer[0].created_by).select().first()}}
+		<div>Latest Answer By {{=A(answer[0].author_name, _href=URL('profile', args=answer[0].created_by))}} about {{=prettydate(answer[0].created_on)}}	:</div>
+		<div><img class="comment-avatar" src="{{=URL('download', args=user.profile_picture)}}" /></div>
+		<br>
+		<div>&nbsp;&nbsp;{{=answer[0].answer}}</div>
+		{{else:}}
+		<div>No Answers Yet</div>
+		{{pass}}
+	</div>
+{{pass}}
+</div>
+</div>

@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.AttributeError'> 'DAL' object has no attribute 'quesions'"
+p3
+sS'layer'
+p4
+S'/home/pranav/sem2/ITWS2/web2py/applications/quora/controllers/default.py'
+p5
+sS'code'
+p6
+S'# -*- coding: utf-8 -*-\n# this file is released under public domain and you can use without limitations\n\n#########################################################################\n## This is a sample controller\n## - index is the default action of any application\n## - user is required for authentication and authorization\n## - download is for downloading files uploaded in the db (does streaming)\n#########################################################################\n\n@auth.requires_login()\ndef index():\n\treturn dict()\n\n@auth.requires_login()\ndef alllist():\n\tif len(request.args): page=int(request.args[0])\n\telse: page=0\n\titems_per_page=10\n\tlimitby=(page*items_per_page,(page+1)*items_per_page+1)\n\ttopics=db().select(db.tags.ALL, limitby=limitby)\n\treturn dict(page=page, items_per_page=items_per_page,user=user,topics=topics)\n\n@auth.requires_login()\ndef mylist():\n\talltags=db().select(db.tags.ALL)\n\treturn dict(alltags=alltags)\n\ndef subscribe():\n\tvars=request.post_vars\n\ttag=str(vars.tagid)\n\tsubscriptions=auth.user.subscribed\n\tif tag not in subscriptions:\n\t\tsubscriptions.insert(0,tag)\n\telse:\n\t\tsubscriptions.remove(tag)\n\trow=db(db.auth_user.id==auth.user.id).select().first()\n\trow.update_record(subscribed=subscriptions)\n\t\ndef questions():\n\ttagid=request.args(0,cast=int) or redirect(URL(\'mylist\'))\n\ttagid=str(tagid)\n\tquestion=db().select(db.questions.ALL,orderby=~db.questions.modified_on)\n\treturn dict(tagid=tagid,question=question)\n\ndef ask():\n\tform=SQLFORM(db.quesions)\n\treturn dict(form=form)\n\ndef user():\n    """\n    exposes:\n    http://..../[app]/default/user/login\n    http://..../[app]/default/user/logout\n    http://..../[app]/default/user/register\n    http://..../[app]/default/user/profile\n    http://..../[app]/default/user/retrieve_password\n    http://..../[app]/default/user/change_password\n    http://..../[app]/default/user/bulk_register\n    use @auth.requires_login()\n        @auth.requires_membership(\'group name\')\n        @auth.requires_permission(\'read\',\'table name\',record_id)\n    to decorate functions that need access control\n    also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users\n    """\n    return dict(form=auth())\n\n\n@cache.action()\ndef download():\n    """\n    allows downloading of uploaded files\n    http://..../[app]/default/download/[filename]\n    """\n    return response.download(request, db)\n\n\ndef call():\n    """\n    exposes services. for example:\n    http://..../[app]/default/call/jsonrpc\n    decorate with @services.jsonrpc the functions to expose\n    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv\n    """\n    return service()\n\n\n\nresponse._vars=response._caller(ask)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "/home/pranav/sem2/ITWS2/web2py/gluon/restricted.py", line 227, in restricted\n    exec ccode in environment\n  File "/home/pranav/sem2/ITWS2/web2py/applications/quora/controllers/default.py", line 89, in <module>\n  File "/home/pranav/sem2/ITWS2/web2py/gluon/globals.py", line 412, in <lambda>\n    self._caller = lambda f: f()\n  File "/home/pranav/sem2/ITWS2/web2py/applications/quora/controllers/default.py", line 47, in ask\n    form=SQLFORM(db.quesions)\n  File "/home/pranav/sem2/ITWS2/web2py/gluon/packages/dal/pydal/base.py", line 921, in __getattr__\n    return BasicStorage.__getattribute__(self, key)\nAttributeError: \'DAL\' object has no attribute \'quesions\'\n'
+p11
+s.

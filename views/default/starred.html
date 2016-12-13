@@ -1,0 +1,6 @@
+{{extend 'layout.html'}}
+{{for questions in questions:}}
+{{if str(questions.id) in auth.user.starred:}}
+{{=LI(A(questions.question, _href=URL('answer',args=questions.id)))}}
+{{pass}}
+{{pass}}

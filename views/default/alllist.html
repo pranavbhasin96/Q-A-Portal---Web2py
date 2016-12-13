@@ -1,0 +1,56 @@
+{{extend 'layout.html'}}
+<h1>ALL TOPICS</h2>
+{{for i,tags in enumerate(topics):}}
+	{{if i==items_per_page:break}}
+		{{=LI(A(tags.tag_name,_href=URL('questions',args=tags.tag_name)))}}
+	{{if str(tags.id) not in auth.user.subscribed:}}
+		<button id="{{=tags.id}}" onclick="tosubscribe(id);func1(id);"><span id="btn{{=tags.id}}">Subscribe</span></button>
+	{{else:}}
+		<button id="{{=tags.id}}" onclick="tosubscribe(id);func2(id);"><span id="bnt{{=tags.id}}">Unsubscribe</span></button>
+	{{pass}}
+{{pass}}
+<div>
+	{{if page:}}
+		<span id="pbtn"><a href="{{=URL(args=[page-1])}}"><button>previous</button></a></span>
+	{{pass}}
+	{{if len(topics)>items_per_page:}}
+		<span id=nbtn><a href="{{=URL(args=[page+1])}}"><button>next</button></a></span>
+	{{pass}}
+</div>
+
+<script>
+	function tosubscribe(tagid){
+
+		jQuery.ajax({method:'post',url:"{{=URL('subscribe')}}",
+		data:{'tagid':tagid}
+		});
+	}
+	function func1(tagid)
+	{
+		var string1="Subscribe";
+		var string2="Unsubscribe";
+		var str1="btn";
+		var x=tagid;
+		str1=str1+x;
+		var y=document.getElementById(str1);
+		var y1=y.innerHTML;
+		if(y1.localeCompare(string1)==0)
+			y.innerHTML="Unsubscribe";
+		else if(y1.localeCompare(string2)==0)
+			y.innerHTML="Subscribe";
+	}
+	function func2(tagid){
+		var string1="Subscribe";
+		var string2="Unsubscribe";
+		var str2="bnt";
+		var x=tagid;
+		str2=str2+x;
+		var z=document.getElementById(str2);
+		var z1=z.innerHTML;
+		if(z1.localeCompare(string1)==0)
+			z.innerHTML="Unsubscribe";
+		else if(z1.localeCompare(string2)==0)
+			z.innerHTML="Subscribe";	
+	}
+
+</script>
